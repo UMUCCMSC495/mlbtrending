@@ -194,7 +194,7 @@ ON DUPLICATE KEY UPDATE away_runs = VALUES(away_runs), home_runs = VALUES(home_r
 
 
     # Update the last modified date
-    # cursor.execute('UPDATE t_meta SET last_modified =')
+    cursor.execute("UPDATE t_meta SET last_modified = '{0}';".format(dataDate))
 
     cursor.close()
     connection.commit()
