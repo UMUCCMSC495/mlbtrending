@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS t_meta (
     last_modified DATETIME NOT NULL
-);
+) ENGINE = InnoDB;
 
 INSERT INTO t_meta VALUES ('1970-01-01 00:00:00');
 
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS t_team (
     PRIMARY KEY (id),
     UNIQUE (abbr),
     KEY (abbr)
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS t_game (
     away_id INT NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS t_game (
     PRIMARY KEY (home_id, away_id, game_date),
     FOREIGN KEY (home_id) REFERENCES t_team (id),
     FOREIGN KEY (away_id) REFERENCES t_team (id)
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS t_inning (
     away_id INT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS t_inning (
     home_runs INT NULL,
     PRIMARY KEY (home_id, away_id, game_date, inning_number),
     FOREIGN KEY (home_id, away_id, game_date) REFERENCES t_game (home_id, away_id, game_date)
-);
+) ENGINE = InnoDB;
 
 CREATE OR REPLACE VIEW team AS
 SELECT
