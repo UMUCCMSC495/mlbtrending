@@ -32,5 +32,29 @@ class Inning:
         self.awayRuns = awayRuns
         self.homeRuns = homeRuns
 
+def retrieveData(date):
+    """Connects to the MLB API and returns the JSON data for the given date."""
+    pass
+
+def parseData(jsonData):
+    """Turns the JSON data into Games, Teams, and Innings."""
+    pass
+
+def saveData(connection, gameData):
+    """Saves the game data to the database."""
+    pass
+
+def checkDatabase(connection):
+    """Checks whether the necessary tables and views already exist."""
+    pass
+
+def createTables(connection):
+    """Creates the schema tables."""
+    pass
+
+def createViews(connection):
+    """Creates the schema views."""
+    pass
+
 if __name__ == '__main__':
     pass
