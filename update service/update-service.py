@@ -40,34 +40,58 @@ class Inning:
         self.homeRuns = homeRuns
 
 def retrieveData(date):
-    """Connects to the MLB API and returns the JSON data for the given date."""
+    """Connects to the MLB API and returns the raw data for the given date."""
 
     # http://gd2.mlb.com/components/game/mlb/year_XXXX/month_XX/day_XX/master_scoreboard.json
     urlString = 'http://gd2.mlb.com/components/game/mlb/year_{:4d}/month_{:02d}/day_{:02d}/master_scoreboard.json'
 
     url = urlString.format(date.year, date.month, date.day)
     data = urllib.request.urlopen(url).read()
+    data = json.loads(data)
+    data = data['data']['games']
 
     return data
 
-def parseData(jsonData):
-    """Turns the JSON data into Games, Teams, and Innings."""
+def getDates(rawData):
+    """Returns the dates the data was modified and the games took place."""
+    dataDate = dateutil.parser.parse(rawData['modified_date'])
+    # Convert to timezone-unaware type
+    dataDate = dataDate.replace(tzinfo = None)
 
-    data = json.loads(jsonData)
-    data = data['data']['games']
+    gameDate = datetime.date(int(rawData['year']), int(rawData['month']), int(rawData['day']))
 
-    lastModified = dateutil.parser.parse(data['modified_date'])
+    return (dataDate, gameDate)
 
-    return (lastModified, None)
+def dataIsNewer(connection, dataDate):
+    """Checks whether the raw data is newer than the existing data."""
+    cursor = connection.cursor()
+    cursor.execute('SELECT last_modified FROM t_meta;')
 
+    lastModified = cursor.fetchone()[0]
+    cursor.close()
 
-def saveData(connection, gameData):
+    return True if (dataDate > lastModified) else False
+
+def loadGameData(gameDate, rawData):
+    """Turns raw data into Games, Teams, and Innings."""
+
+    return None
+
+def saveData(connection, dataDate, games):
     """Saves the game data to the database."""
+
+    # Save
+
+    # Save game data
+
+    # Save inning data
+
     pass
 
 def tablesExist(connection):
     """Returns true if necessary tables and views appear to exist."""
     tablesNeeded = [
+        't_meta',
         't_team',
         't_game',
         't_inning',
@@ -117,6 +141,11 @@ if __name__ == '__main__':
         createTablesAndViews(db)
 
     # TODO: implement error handling (e.g. JSON data unavailable)
-    jsonData = retrieveData(datetime.date.today())
-    (lastModified, games) = parseData(jsonData)
-    saveData(db, (lastModified, games))
+    rawData = retrieveData(datetime.date.today())
+
+    (dataDate, gameDate) = getDates(rawData)
+
+    if dataIsNewer(db, dataDate):
+        games = loadGameData(gameDate, rawData)
+
+        saveData(db, dataDate, games)
