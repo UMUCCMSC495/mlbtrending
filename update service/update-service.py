@@ -1,3 +1,6 @@
+import config
+import MySQLdb
+
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
         self.id = 0
@@ -44,17 +47,43 @@ def saveData(connection, gameData):
     """Saves the game data to the database."""
     pass
 
-def checkDatabase(connection):
-    """Checks whether the necessary tables and views already exist."""
-    pass
+def tablesExist(connection):
+    """Returns true if necessary tables and views appear to exist."""
+    tablesNeeded = [
+        't_team',
+        't_game',
+        't_inning',
+        'team',
+        'game',
+        'inning'
+        # TODO: add the aggregate views once they're created
+    ]
 
-def createTables(connection):
-    """Creates the schema tables."""
-    pass
+    cursor = connection.cursor()
+    cursor.execute("SHOW TABLES;")
 
-def createViews(connection):
-    """Creates the schema views."""
+    for row in cursor.fetchall():
+        tableName = row[0]
+        if tableName in tablesNeeded:
+            tablesNeeded.remove(tableName)
+
+    return True if (len(tablesNeeded) == 0) else False
+
+def createTablesAndViews(connection):
+    """Creates the schema tables and views from create.sql."""
     pass
 
 if __name__ == '__main__':
+    dbConfig = config.getConfig()
+    db = MySQLdb.connect(
+        host = dbConfig['host'],
+        port = dbConfig['port'],
+        user = dbConfig['username'],
+        passwd = dbConfig['password'],
+        db = dbConfig['database']
+    )
+
+    if not tablesExist(db):
+        createTablesAndViews(db)
+
     pass
