@@ -104,6 +104,32 @@ def loadGameData(gameDate, rawData):
 
         game = Game(gameDate, awayTeam, homeTeam)
 
+        innings = []
+
+        # If the game hasn't started yet, there will be no linescore
+        if 'linescore' in gameData.keys():
+            game.awayTeamRuns = gameData['linescore']['r']['away']
+            game.awayTeamHits = gameData['linescore']['h']['away']
+            game.awayTeamErrors = gameData['linescore']['e']['away']
+            game.awayTeamHomeRuns = gameData['linescore']['hr']['away']
+
+            game.homeTeamRuns = gameData['linescore']['r']['home']
+            game.homeTeamHits = gameData['linescore']['h']['home']
+            game.homeTeamErrors = gameData['linescore']['e']['home']
+            game.homeTeamHomeRuns = gameData['linescore']['hr']['home']
+
+            for inningData in gameData['linescore']['inning']:
+                # Ensure that the inning has data
+                if inningData is dict:
+                    awayRuns = inningData['away'] if ('away' in inningData.keys()) else 0
+                    homeRuns = inningData['home'] if ('home' in inningData.keys()) else 0
+
+                    inning = Inning(awayTeam, homeTeam, awayRuns, homeRuns)
+
+                    innings.append(inning)
+
+        game.innings = innings
+
         games.append(game)
 
     return games
