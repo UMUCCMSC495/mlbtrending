@@ -1,5 +1,8 @@
 import config
 import MySQLdb
+from datetime import date
+import urllib.request
+import json
 
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
@@ -37,7 +40,14 @@ class Inning:
 
 def retrieveData(date):
     """Connects to the MLB API and returns the JSON data for the given date."""
-    pass
+
+    # http://gd2.mlb.com/components/game/mlb/year_XXXX/month_XX/day_XX/master_scoreboard.json
+    urlString = 'http://gd2.mlb.com/components/game/mlb/year_{:4d}/month_{:02d}/day_{:02d}/master_scoreboard.json'
+
+    url = urlString.format(date.year, date.month, date.day)
+    data = urllib.request.urlopen(url).read()
+
+    return data
 
 def parseData(jsonData):
     """Turns the JSON data into Games, Teams, and Innings."""
@@ -98,4 +108,7 @@ if __name__ == '__main__':
     if not tablesExist(db):
         createTablesAndViews(db)
 
-    pass
+    # TODO: implement error handling (e.g. JSON data unavailable)
+    jsonData = retrieveData(date.today())
+    games = parseData(jsonData)
+    saveData(db, games)
