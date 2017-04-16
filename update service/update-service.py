@@ -1,8 +1,9 @@
 import config
 import MySQLdb
-from datetime import date
+import datetime
 import urllib.request
 import json
+import dateutil.parser
 
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
@@ -51,7 +52,14 @@ def retrieveData(date):
 
 def parseData(jsonData):
     """Turns the JSON data into Games, Teams, and Innings."""
-    pass
+
+    data = json.loads(jsonData)
+    data = data['data']['games']
+
+    lastModified = dateutil.parser.parse(data['modified_date'])
+
+    return (lastModified, None)
+
 
 def saveData(connection, gameData):
     """Saves the game data to the database."""
@@ -109,6 +117,6 @@ if __name__ == '__main__':
         createTablesAndViews(db)
 
     # TODO: implement error handling (e.g. JSON data unavailable)
-    jsonData = retrieveData(date.today())
-    games = parseData(jsonData)
-    saveData(db, games)
+    jsonData = retrieveData(datetime.date.today())
+    (lastModified, games) = parseData(jsonData)
+    saveData(db, (lastModified, games))
