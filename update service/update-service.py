@@ -26,9 +26,11 @@ class Game:
         self.innings = []
 
 class Team:
-    def __init__(self, name, abbreviation, city):
+    def __init__(self, name, abbr, city):
+        self.id = 0
+
         self.name = name
-        self.abbreviation = abbreviation
+        self.abbr = abbr
         self.city = city
 
 class Inning:
@@ -74,8 +76,37 @@ def dataIsNewer(connection, dataDate):
 
 def loadGameData(gameDate, rawData):
     """Turns raw data into Games, Teams, and Innings."""
+    games = []
 
-    return None
+    # A single team may play more than one game on the same day
+    teams = {}
+
+    for gameData in rawData['game']:
+        awayTeamName = gameData['away_team_name']
+        awayTeamAbbr = gameData['away_name_abbrev']
+        awayTeamCity = gameData['away_team_city']
+
+        if awayTeamAbbr not in teams.keys():
+            awayTeam = Team(awayTeamName, awayTeamAbbr, awayTeamCity)
+            teams[awayTeamAbbr] = awayTeam
+        else:
+            awayTeam = teams[awayTeamAbbr]
+
+        homeTeamName = gameData['home_team_name']
+        homeTeamAbbr = gameData['home_name_abbrev']
+        homeTeamCity = gameData['home_team_city']
+
+        if homeTeamAbbr not in teams.keys():
+            homeTeam = Team(homeTeamName, homeTeamAbbr, homeTeamCity)
+            teams[homeTeamAbbr] = homeTeam
+        else:
+            homeTeam = teams[homeTeamAbbr]
+
+        game = Game(gameDate, awayTeam, homeTeam)
+
+        games.append(game)
+
+    return games
 
 def saveData(connection, dataDate, games):
     """Saves the game data to the database."""
