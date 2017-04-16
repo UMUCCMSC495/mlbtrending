@@ -4,6 +4,7 @@ import datetime
 import urllib.request
 import json
 import dateutil.parser
+import warnings
 
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
@@ -12,6 +13,9 @@ class Game:
         self.date = date
         self.awayTeam = awayTeam
         self.homeTeam = homeTeam
+
+        self.status = ''
+        self.location = ''
 
         self.awayTeamRuns = 0
         self.awayTeamHits = 0
@@ -104,6 +108,9 @@ def loadGameData(gameDate, rawData):
 
         game = Game(gameDate, awayTeam, homeTeam)
 
+        game.status = gameData['status']['status']
+        game.location = gameData['location']
+
         innings = []
 
         # If the game hasn't started yet, there will be no linescore
@@ -132,18 +139,59 @@ def loadGameData(gameDate, rawData):
 
         games.append(game)
 
-    return games
+    return (teams, games)
 
-def saveData(connection, dataDate, games):
+def saveData(connection, dataDate, teams, games):
     """Saves the game data to the database."""
+    cursor = connection.cursor()
 
-    # Save
+    # Save teams
+    insertStmt = "INSERT IGNORE INTO t_team (abbr, name, city) VALUES ('{0}', '{1}', '{2}')"
+    for team in teams.values():
+        cursor.execute(insertStmt.format(team.abbr, team.name, team.city))
+    connection.commit()
+
+    # Retrieve team IDs
+    cursor.execute('SELECT id, abbr FROM t_team;')
+    for row in cursor.fetchall():
+        teams[row[1]].id = row[0]
 
     # Save game data
+    insertStmt = """
+INSERT INTO t_game (game_date, away_id, home_id,
+    status, location,
+    away_runs, away_hits, away_errors, away_home_runs,
+    home_runs, home_hits, home_errors, home_home_runs)
+VALUES ('{0}', {1}, {2},
+    '{3}', '{4}',
+    {5},  {6},  {7},  {8},
+    {9}, {10}, {11}, {12})
+ON DUPLICATE KEY UPDATE
+    status = VALUES(status),
+    away_runs = VALUES(away_runs), away_hits = VALUES(away_hits),
+        away_errors = VALUES(away_errors), away_home_runs = VALUES(away_home_runs),
+    home_runs = VALUES(home_runs), home_hits = VALUES(home_hits),
+        home_errors = VALUES(home_errors), home_home_runs = VALUES(home_home_runs)
+"""
+# TODO: on duplicate key update
+    for game in games:
+        cursor.execute(insertStmt.format(
+            game.date, game.awayTeam.id, game.homeTeam.id,
+            game.status, game.location,
+            game.awayTeamRuns, game.awayTeamHits, game.awayTeamErrors, game.awayTeamHomeRuns,
+            game.homeTeamRuns, game.homeTeamHits, game.homeTeamErrors, game.homeTeamHomeRuns)
+        )
+    connection.commit()
+
+    # Retrieve game IDs
+
 
     # Save inning data
 
-    pass
+    # Update the last modified date
+    # cursor.execute('UPDATE t_meta SET last_modified =')
+
+    cursor.close()
 
 def tablesExist(connection):
     """Returns true if necessary tables and views appear to exist."""
@@ -207,6 +255,6 @@ if __name__ == '__main__':
     (dataDate, gameDate) = getDates(rawData)
 
     if dataIsNewer(db, dataDate):
-        games = loadGameData(gameDate, rawData)
+        (teams, games) = loadGameData(gameDate, rawData)
 
-        saveData(db, dataDate, games)
+        saveData(db, dataDate, teams, games)
