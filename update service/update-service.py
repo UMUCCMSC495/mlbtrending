@@ -194,6 +194,10 @@ if __name__ == '__main__':
         db = dbConfig['database']
     )
 
+    # Suppress MySQL warning messages raised when INSERT IGNORE runs into
+    # duplicate keys
+    warnings.filterwarnings('ignore', category = MySQLdb.Warning)
+
     if not tablesExist(db):
         createTablesAndViews(db)
 
