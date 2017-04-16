@@ -67,11 +67,23 @@ def tablesExist(connection):
         if tableName in tablesNeeded:
             tablesNeeded.remove(tableName)
 
+    cursor.close()
+
     return True if (len(tablesNeeded) == 0) else False
 
 def createTablesAndViews(connection):
     """Creates the schema tables and views from create.sql."""
-    pass
+    cursor = connection.cursor()
+
+    file = open('sql/create.sql')
+    contents = file.read()
+    file.close()
+
+    commands = contents.split(';')
+    for command in commands:
+        cursor.execute(command)
+
+    cursor.close()
 
 if __name__ == '__main__':
     dbConfig = config.getConfig()
