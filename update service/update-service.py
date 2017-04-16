@@ -38,10 +38,7 @@ class Team:
         self.city = city
 
 class Inning:
-    def __init__(self, awayTeam, homeTeam, awayRuns, homeRuns):
-        self.awayTeam = awayTeam
-        self.homeTeam = homeTeam
-
+    def __init__(self, awayRuns, homeRuns):
         self.awayRuns = awayRuns
         self.homeRuns = homeRuns
 
@@ -82,7 +79,6 @@ def loadGameData(gameDate, rawData):
     """Turns raw data into Games, Teams, and Innings."""
     games = []
 
-    # A single team may play more than one game on the same day
     teams = {}
 
     for gameData in rawData['game']:
@@ -127,11 +123,11 @@ def loadGameData(gameDate, rawData):
 
             for inningData in gameData['linescore']['inning']:
                 # Ensure that the inning has data
-                if inningData is dict:
+                if isinstance(inningData, dict):
                     awayRuns = inningData['away'] if ('away' in inningData.keys()) else 0
                     homeRuns = inningData['home'] if ('home' in inningData.keys()) else 0
 
-                    inning = Inning(awayTeam, homeTeam, awayRuns, homeRuns)
+                    inning = Inning(awayRuns, homeRuns)
 
                     innings.append(inning)
 
@@ -146,9 +142,9 @@ def saveData(connection, dataDate, teams, games):
     cursor = connection.cursor()
 
     # Save teams
-    insertStmt = "INSERT IGNORE INTO t_team (abbr, name, city) VALUES ('{0}', '{1}', '{2}')"
+    insertTeam = "INSERT IGNORE INTO t_team (abbr, name, city) VALUES ('{0}', '{1}', '{2}')"
     for team in teams.values():
-        cursor.execute(insertStmt.format(team.abbr, team.name, team.city))
+        cursor.execute(insertTeam.format(team.abbr, team.name, team.city))
     connection.commit()
 
     # Retrieve team IDs
@@ -156,8 +152,8 @@ def saveData(connection, dataDate, teams, games):
     for row in cursor.fetchall():
         teams[row[1]].id = row[0]
 
-    # Save game data
-    insertStmt = """
+    # Save game and inning data
+    insertGame = """
 INSERT INTO t_game (game_date, away_id, home_id,
     status, location,
     away_runs, away_hits, away_errors, away_home_runs,
@@ -173,25 +169,35 @@ ON DUPLICATE KEY UPDATE
     home_runs = VALUES(home_runs), home_hits = VALUES(home_hits),
         home_errors = VALUES(home_errors), home_home_runs = VALUES(home_home_runs)
 """
-# TODO: on duplicate key update
+
+    insertInning = """
+INSERT INTO t_inning (game_date, away_id, home_id, inning_number, away_runs, home_runs)
+VALUES ('{0}', {1}, {2}, {3}, {4}, {5})
+ON DUPLICATE KEY UPDATE away_runs = VALUES(away_runs), home_runs = VALUES(home_runs);
+"""
+
     for game in games:
-        cursor.execute(insertStmt.format(
+        cursor.execute(insertGame.format(
             game.date, game.awayTeam.id, game.homeTeam.id,
             game.status, game.location,
             game.awayTeamRuns, game.awayTeamHits, game.awayTeamErrors, game.awayTeamHomeRuns,
             game.homeTeamRuns, game.homeTeamHits, game.homeTeamErrors, game.homeTeamHomeRuns)
         )
-    connection.commit()
 
-    # Retrieve game IDs
+        # Save inning data
+        inningNo = 1
+        for inning in game.innings:
+            cursor.execute(insertInning.format(
+                game.date, game.awayTeam.id, game.homeTeam.id, inningNo, inning.awayRuns, inning.homeRuns)
+            )
+            inningNo += 1
 
-
-    # Save inning data
 
     # Update the last modified date
     # cursor.execute('UPDATE t_meta SET last_modified =')
 
     cursor.close()
+    connection.commit()
 
 def tablesExist(connection):
     """Returns true if necessary tables and views appear to exist."""
