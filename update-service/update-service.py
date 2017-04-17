@@ -264,3 +264,5 @@ if __name__ == '__main__':
         (teams, games) = loadGameData(gameDate, rawData)
 
         saveData(db, dataDate, teams, games)
+
+        # TODO: implement logging
