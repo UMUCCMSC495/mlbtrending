@@ -150,8 +150,13 @@ def loadGameData(gameDate, rawData):
                     for inningData in gameData['linescore']['inning']:
                         # Ensure that the inning has data
                         if isinstance(inningData, dict):
-                            awayRuns = inningData['away'] if ('away' in inningData.keys()) else 0
-                            homeRuns = inningData['home'] if ('home' in inningData.keys()) else 0
+                            awayRuns = inningData['away'] if ('away' in inningData.keys()) else 'NULL'
+                            homeRuns = inningData['home'] if ('home' in inningData.keys()) else 'NULL'
+
+                            if awayRuns == '':
+                                awayRuns = "'NULL'"
+                            if homeRuns == '':
+                                homeRuns = "'NULL'"
 
                             inning = Inning(awayRuns, homeRuns)
 
