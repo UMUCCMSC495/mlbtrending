@@ -269,7 +269,6 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
 
     if (not onlyIfNewer) or dataIsNewer(connection, dataDate):
         (teams, games) = loadGameData(gameDate, rawData)
-        print(teams)
 
         saveData(connection, dataDate, teams, games)
 
