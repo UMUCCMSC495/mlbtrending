@@ -95,69 +95,71 @@ def loadGameData(gameDate, rawData):
 
     # Ensure that the date had any games played at all
     if 'game' in rawData.keys():
-        for gameData in rawData['game']:
-            awayTeamName = gameData['away_team_name']
-            awayTeamAbbr = gameData['away_name_abbrev']
-            awayTeamCity = gameData['away_team_city']
+        # Discard irregular game dates (e.g. All-Star Games)
+        if not isinstance(rawData['game'], dict):
+            for gameData in rawData['game']:
+                awayTeamName = gameData['away_team_name']
+                awayTeamAbbr = gameData['away_name_abbrev']
+                awayTeamCity = gameData['away_team_city']
 
-            if awayTeamAbbr not in teams.keys():
-                awayTeam = Team(awayTeamName, awayTeamAbbr, awayTeamCity)
-                teams[awayTeamAbbr] = awayTeam
-            else:
-                awayTeam = teams[awayTeamAbbr]
+                if awayTeamAbbr not in teams.keys():
+                    awayTeam = Team(awayTeamName, awayTeamAbbr, awayTeamCity)
+                    teams[awayTeamAbbr] = awayTeam
+                else:
+                    awayTeam = teams[awayTeamAbbr]
 
-            homeTeamName = gameData['home_team_name']
-            homeTeamAbbr = gameData['home_name_abbrev']
-            homeTeamCity = gameData['home_team_city']
+                homeTeamName = gameData['home_team_name']
+                homeTeamAbbr = gameData['home_name_abbrev']
+                homeTeamCity = gameData['home_team_city']
 
-            if homeTeamAbbr not in teams.keys():
-                homeTeam = Team(homeTeamName, homeTeamAbbr, homeTeamCity)
-                teams[homeTeamAbbr] = homeTeam
-            else:
-                homeTeam = teams[homeTeamAbbr]
+                if homeTeamAbbr not in teams.keys():
+                    homeTeam = Team(homeTeamName, homeTeamAbbr, homeTeamCity)
+                    teams[homeTeamAbbr] = homeTeam
+                else:
+                    homeTeam = teams[homeTeamAbbr]
 
-            (gameHour, gameMinute) = gameData['time'].split(':')
-            gameTime = gameDate.replace(hour = int(gameHour), minute = int(gameMinute))
-            game = Game(gameTime, awayTeam, homeTeam)
+                (gameHour, gameMinute) = gameData['time'].split(':')
+                gameTime = gameDate.replace(hour = int(gameHour), minute = int(gameMinute))
+                game = Game(gameTime, awayTeam, homeTeam)
 
-            # Obtain inning number
-            if gameData['status']['status'] == 'In Progress':
-                game.status = '{0} of {1}'.format(
-                    gameData['status']['status'],
-                    getOrdinal(gameData['status']['inning'])
-                )
-            else:
-                game.status = gameData['status']['status']
+                # Obtain inning number
+                if gameData['status']['status'] == 'In Progress':
+                    game.status = '{0} of {1}'.format(
+                        gameData['status']['status'],
+                        getOrdinal(gameData['status']['inning'])
+                    )
+                else:
+                    game.status = gameData['status']['status']
 
-            game.location = gameData['location']
+                game.location = gameData['location']
 
-            innings = []
+                innings = []
 
-            # If the game hasn't started yet, there will be no linescore
-            if 'linescore' in gameData.keys():
-                game.awayTeamRuns = gameData['linescore']['r']['away']
-                game.awayTeamHits = gameData['linescore']['h']['away']
-                game.awayTeamErrors = gameData['linescore']['e']['away']
-                game.awayTeamHomeRuns = gameData['linescore']['hr']['away']
+                # If the game hasn't started yet, there will be no linescore
+                if 'linescore' in gameData.keys():
+                    game.awayTeamRuns = gameData['linescore']['r']['away']
+                    game.awayTeamHits = gameData['linescore']['h']['away']
+                    game.awayTeamErrors = gameData['linescore']['e']['away']
+                    game.awayTeamHomeRuns = gameData['linescore']['hr']['away']
 
-                game.homeTeamRuns = gameData['linescore']['r']['home']
-                game.homeTeamHits = gameData['linescore']['h']['home']
-                game.homeTeamErrors = gameData['linescore']['e']['home']
-                game.homeTeamHomeRuns = gameData['linescore']['hr']['home']
+                    game.homeTeamRuns = gameData['linescore']['r']['home']
+                    game.homeTeamHits = gameData['linescore']['h']['home']
+                    game.homeTeamErrors = gameData['linescore']['e']['home']
+                    game.homeTeamHomeRuns = gameData['linescore']['hr']['home']
 
-                for inningData in gameData['linescore']['inning']:
-                    # Ensure that the inning has data
-                    if isinstance(inningData, dict):
-                        awayRuns = inningData['away'] if ('away' in inningData.keys()) else 0
-                        homeRuns = inningData['home'] if ('home' in inningData.keys()) else 0
+                    for inningData in gameData['linescore']['inning']:
+                        # Ensure that the inning has data
+                        if isinstance(inningData, dict):
+                            awayRuns = inningData['away'] if ('away' in inningData.keys()) else 0
+                            homeRuns = inningData['home'] if ('home' in inningData.keys()) else 0
 
-                        inning = Inning(awayRuns, homeRuns)
+                            inning = Inning(awayRuns, homeRuns)
 
-                        innings.append(inning)
+                            innings.append(inning)
 
-            game.innings = innings
+                game.innings = innings
 
-            games.append(game)
+                games.append(game)
 
     return (teams, games)
 
