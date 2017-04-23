@@ -170,7 +170,10 @@ def saveData(connection, dataDate, teams, games):
     # Retrieve team IDs
     cursor.execute('SELECT id, abbr FROM t_team;')
     for row in cursor.fetchall():
-        teams[row[1]].id = row[0]
+        # Not every team plays every day; need to ensure that the list of teams
+        # that played today includes the given abbreviation
+        if row[1] in teams.keys():
+            teams[row[1]].id = row[0]
 
     # Save game and inning data
     insertGame = """
