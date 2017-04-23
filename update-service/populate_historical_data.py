@@ -33,16 +33,10 @@ if __name__ == '__main__':
     if not update_service.tablesExist(connection):
         update_service.createTablesAndViews(connection)
 
-    # 2014 MLB season: 3/22/2014 - 10/29/2014
-    start = datetime.strptime('03/22/2014', '%m/%d/%Y')
-    end = datetime.strptime('10/29/2014', '%m/%d/%Y')
-    print('2016 MLB season')
-    updateDataForDates(start, end)
-
     # 2015 MLB season: 4/5/2015 - 11/1/2015
-    start = datetime.strptime('04/05/2016', '%m/%d/%Y')
+    start = datetime.strptime('04/05/2015', '%m/%d/%Y')
     end = datetime.strptime('11/01/2015', '%m/%d/%Y')
-    print('2016 MLB season')
+    print('2015 MLB season')
     updateDataForDates(start, end)
 
     # 2016 MLB season: 4/3/2016 - 11/2/2016
