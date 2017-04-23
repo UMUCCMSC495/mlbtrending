@@ -238,9 +238,22 @@ def createTablesAndViews(connection):
 
     cursor.close()
 
+def updateDataForDate(connection, date):
+    # TODO: implement error handling (e.g. JSON data unavailable)
+    rawData = retrieveData(date)
+
+    (dataDate, gameDate) = getDates(rawData)
+
+    if dataIsNewer(connection, dataDate):
+        (teams, games) = loadGameData(gameDate, rawData)
+
+        saveData(connection, dataDate, teams, games)
+
+        # TODO: implement logging
+
 if __name__ == '__main__':
     dbConfig = config.getConfig()
-    db = MySQLdb.connect(
+    connection = MySQLdb.connect(
         host = dbConfig['host'],
         port = dbConfig['port'],
         user = dbConfig['username'],
@@ -252,17 +265,9 @@ if __name__ == '__main__':
     # duplicate keys
     warnings.filterwarnings('ignore', category = MySQLdb.Warning)
 
-    if not tablesExist(db):
-        createTablesAndViews(db)
+    if not tablesExist(connection):
+        createTablesAndViews(connection)
 
-    # TODO: implement error handling (e.g. JSON data unavailable)
-    rawData = retrieveData(datetime.date.today())
+    updateDataForDate(connection, datetime.date.today())
 
-    (dataDate, gameDate) = getDates(rawData)
-
-    if dataIsNewer(db, dataDate):
-        (teams, games) = loadGameData(gameDate, rawData)
-
-        saveData(db, dataDate, teams, games)
-
-        # TODO: implement logging
+    connection.close()
