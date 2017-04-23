@@ -42,13 +42,13 @@ class Inning:
         self.awayRuns = awayRuns
         self.homeRuns = homeRuns
 
-def retrieveData(date):
-    """Connects to the MLB API and returns the raw data for the given date."""
-
+def getMLBApiUrlString(date):
     # http://gd2.mlb.com/components/game/mlb/year_XXXX/month_XX/day_XX/master_scoreboard.json
     urlString = 'http://gd2.mlb.com/components/game/mlb/year_{:4d}/month_{:02d}/day_{:02d}/master_scoreboard.json'
+    return urlString.format(date.year, date.month, date.day)
 
-    url = urlString.format(date.year, date.month, date.day)
+def retrieveData(url):
+    """Connects to the MLB API and returns the raw data for the given date."""
     data = urllib.request.urlopen(url).read()
     data = json.loads(data)
     data = data['data']['games']
@@ -287,16 +287,23 @@ def createTablesAndViews(connection):
 
 def updateDataForDate(connection, date, onlyIfNewer = True):
     # TODO: implement error handling (e.g. JSON data unavailable)
-    rawData = retrieveData(date)
+    apiUrl = getMLBApiUrlString(date)
 
-    (dataDate, gameDate) = getDates(rawData)
+    try:
+        rawData = retrieveData(apiUrl)
 
-    if (not onlyIfNewer) or dataIsNewer(connection, dataDate):
-        (teams, games) = loadGameData(gameDate, rawData)
+        (dataDate, gameDate) = getDates(rawData)
 
-        saveData(connection, dataDate, teams, games)
+        if (not onlyIfNewer) or dataIsNewer(connection, dataDate):
+            (teams, games) = loadGameData(gameDate, rawData)
 
-        # TODO: implement logging
+            saveData(connection, dataDate, teams, games)
+
+            # TODO: implement logging
+    except urllib.error.URLError as e:
+        print('Failed to obtain data from MLB API:', e.reason)
+        print("\tat:", apiUrl)
+
 
 if __name__ == '__main__':
     dbConfig = config.getConfig()
