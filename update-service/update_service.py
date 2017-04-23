@@ -119,9 +119,13 @@ def loadGameData(gameDate, rawData):
                     homeTeam = teams[homeTeamAbbr]
 
                 (gameHour, gameMinute) = gameData['time'].split(':')
-                if gameData['ampm'] == 'PM':
+                gameHour = int(gameHour)
+                gameMinute = int(gameMinute)
+
+                if gameData['ampm'] == 'PM' and gameHour != 12:
                     gameHour = int(gameHour) + 12
-                gameTime = gameDate.replace(hour = int(gameHour), minute = int(gameMinute))
+
+                gameTime = gameDate.replace(hour = gameHour, minute = gameMinute)
                 game = Game(gameTime, awayTeam, homeTeam)
 
                 # Obtain inning number
