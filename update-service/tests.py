@@ -5,8 +5,29 @@ import datetime
 import update_service
 
 class TestUpdateService(unittest.TestCase):
-    def testRetrieveData(self):
-        pass
+    def testDataIsNewer(self):
+        class FakeCursor:
+            def execute(self, query):
+                pass
+
+            def fetchone(self):
+                ret = [ datetime.datetime(2017, 4, 4, 0, 0, 0) ]
+                return ret
+
+            def close(self):
+                pass
+
+        class FakeDatabaseConnection:
+            def cursor(self):
+                return FakeCursor()
+
+        dataIsNewerDate = datetime.datetime(2017, 4, 5, 0, 0, 0)
+        dataIsOlderDate = datetime.datetime(2017, 4, 3, 0, 0, 0)
+
+        fakeConnection = FakeDatabaseConnection()
+
+        self.assertTrue(update_service.dataIsNewer(fakeConnection, dataIsNewerDate))
+        self.assertFalse(update_service.dataIsNewer(fakeConnection, dataIsOlderDate))
 
     def testGetDates(self):
         trueDataDate = datetime.datetime(2017, 2, 10, 0, 0, 0)
