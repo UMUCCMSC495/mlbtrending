@@ -303,6 +303,8 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
     except urllib.error.URLError as e:
         logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
         logger.error("\tat: {0}".format(apiUrl))
+    except Exception as e:
+        logger.error(e.reason)
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
