@@ -75,6 +75,18 @@ def dataIsNewer(connection, dataDate):
 
     return True if (dataDate > lastModified) else False
 
+def getOrdinal(number):
+    """Returns the ordinal representation of the given number."""
+    numberMod = abs(int(number)) % 100
+
+    if numberMod < 11 or numberMod > 20:
+        suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
+        suffix = suffixes[numberMod % 10]
+    else:
+        suffix = 'th'
+
+    return str(number) + suffix
+
 def loadGameData(gameDate, rawData):
     """Turns raw data into Games, Teams, and Innings."""
     games = []
@@ -104,7 +116,15 @@ def loadGameData(gameDate, rawData):
 
         game = Game(gameDate, awayTeam, homeTeam)
 
-        game.status = gameData['status']['status']
+        # Obtain inning number
+        if gameData['status']['status'] == 'In Progress':
+            game.status = '{0} of {1}'.format(
+                gameData['status']['status'],
+                getOrdinal(gameData['status']['inning'])
+            )
+        else:
+            game.status = gameData['status']['status']
+
         game.location = gameData['location']
 
         innings = []
