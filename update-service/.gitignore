@@ -2,3 +2,6 @@ __pycache__/
 
 config.py
 logs/
+
+baseball-data.zip
+export-data.sh
