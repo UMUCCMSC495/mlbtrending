@@ -288,6 +288,7 @@ def createTablesAndViews(connection):
 
 def updateDataForDate(connection, date, onlyIfNewer = True):
     logger = logging.getLogger(__name__)
+    logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
 
     apiUrl = getMLBApiUrlString(date)
 
@@ -300,6 +301,10 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
             (teams, games) = loadGameData(gameDate, rawData)
 
             saveData(connection, dataDate, teams, games)
+
+            logger.info('Update completed successfully.')
+        else:
+            logger.info('Data was already up-to-date.')
     except urllib.error.URLError as e:
         logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
         logger.error("\tat: {0}".format(apiUrl))
@@ -317,23 +322,26 @@ if __name__ == '__main__':
     logger.addHandler(logHandler)
 
     dbConfig = config.getConfig()
-    connection = MySQLdb.connect(
-        host = dbConfig['host'],
-        port = dbConfig['port'],
-        user = dbConfig['username'],
-        passwd = dbConfig['password'],
-        db = dbConfig['database']
-    )
 
-    # Suppress MySQL warning messages raised when INSERT IGNORE runs into
-    # duplicate keys
-    warnings.filterwarnings('ignore', category = MySQLdb.Warning)
+    try:
+        connection = MySQLdb.connect(
+            host = dbConfig['host'],
+            port = dbConfig['port'],
+            user = dbConfig['username'],
+            passwd = dbConfig['password'],
+            db = dbConfig['database']
+        )
 
-    if not tablesExist(connection):
-        logger.info('Tables and views do not exist; creating.')
-        createTablesAndViews(connection)
+        # Suppress MySQL warning messages raised when INSERT IGNORE runs into
+        # duplicate keys
+        warnings.filterwarnings('ignore', category = MySQLdb.Warning)
 
-    logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
-    updateDataForDate(connection, datetime.datetime.today())
+        if not tablesExist(connection):
+            logger.info('Tables and views do not exist; creating.')
+            createTablesAndViews(connection)
 
-    connection.close()
+        updateDataForDate(connection, datetime.datetime.today())
+
+        connection.close()
+    except MySQLdb.Error as e:
+        logger.error(str(e))
