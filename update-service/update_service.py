@@ -119,6 +119,8 @@ def loadGameData(gameDate, rawData):
                     homeTeam = teams[homeTeamAbbr]
 
                 (gameHour, gameMinute) = gameData['time'].split(':')
+                if gameData['ampm'] == 'PM':
+                    gameHour = int(gameHour) + 12
                 gameTime = gameDate.replace(hour = int(gameHour), minute = int(gameMinute))
                 game = Game(gameTime, awayTeam, homeTeam)
 
