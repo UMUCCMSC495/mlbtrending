@@ -300,8 +300,6 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
             (teams, games) = loadGameData(gameDate, rawData)
 
             saveData(connection, dataDate, teams, games)
-
-            # TODO: implement logging
     except urllib.error.URLError as e:
         logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
         logger.error("\tat: {0}".format(apiUrl))
