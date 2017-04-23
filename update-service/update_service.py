@@ -258,14 +258,15 @@ def createTablesAndViews(connection):
 
     cursor.close()
 
-def updateDataForDate(connection, date):
+def updateDataForDate(connection, date, onlyIfNewer = True):
     # TODO: implement error handling (e.g. JSON data unavailable)
     rawData = retrieveData(date)
 
     (dataDate, gameDate) = getDates(rawData)
 
-    if dataIsNewer(connection, dataDate):
+    if (not onlyIfNewer) or dataIsNewer(connection, dataDate):
         (teams, games) = loadGameData(gameDate, rawData)
+        print(teams)
 
         saveData(connection, dataDate, teams, games)
 
