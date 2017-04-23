@@ -125,7 +125,7 @@ def loadGameData(gameDate, rawData):
                 # Obtain inning number
                 if gameData['status']['status'] == 'In Progress':
                     game.status = '{0} of {1}'.format(
-                        gameData['status']['status'],
+                        gameData['status']['inning_state'],
                         getOrdinal(gameData['status']['inning'])
                     )
                 else:
