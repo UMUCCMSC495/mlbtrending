@@ -194,11 +194,12 @@ INSERT INTO t_game (game_date, away_id, home_id,
     status, location,
     away_runs, away_hits, away_errors, away_home_runs,
     home_runs, home_hits, home_errors, home_home_runs)
-VALUES ('{0}', {1}, {2},
+VALUES ('{0:%Y-%m-%d %H:%M:%S}', {1}, {2},
     '{3}', '{4}',
     {5},  {6},  {7},  {8},
     {9}, {10}, {11}, {12})
 ON DUPLICATE KEY UPDATE
+    game_date = VALUES(game_date),
     status = VALUES(status),
     away_runs = VALUES(away_runs), away_hits = VALUES(away_hits),
         away_errors = VALUES(away_errors), away_home_runs = VALUES(away_home_runs),
@@ -208,8 +209,11 @@ ON DUPLICATE KEY UPDATE
 
     insertInning = """
 INSERT INTO t_inning (game_date, away_id, home_id, inning_number, away_runs, home_runs)
-VALUES ('{0}', {1}, {2}, {3}, {4}, {5})
-ON DUPLICATE KEY UPDATE away_runs = VALUES(away_runs), home_runs = VALUES(home_runs);
+VALUES ('{0:%Y-%m-%d %H:%M:%S}', {1}, {2}, {3}, {4}, {5})
+ON DUPLICATE KEY UPDATE
+    game_date = VALUES(game_date),
+    away_runs = VALUES(away_runs),
+    home_runs = VALUES(home_runs);
 """
 
     for game in games:
