@@ -5,6 +5,7 @@ import urllib.request
 import json
 import dateutil.parser
 import warnings
+import logging
 
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
@@ -286,7 +287,8 @@ def createTablesAndViews(connection):
     cursor.close()
 
 def updateDataForDate(connection, date, onlyIfNewer = True):
-    # TODO: implement error handling (e.g. JSON data unavailable)
+    logger = logging.getLogger(__name__)
+
     apiUrl = getMLBApiUrlString(date)
 
     try:
@@ -301,11 +303,19 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
 
             # TODO: implement logging
     except urllib.error.URLError as e:
-        print('Failed to obtain data from MLB API:', e.reason)
-        print("\tat:", apiUrl)
-
+        logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
+        logger.error("\tat: {0}".format(apiUrl))
 
 if __name__ == '__main__':
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    logHandler = logging.FileHandler('logs/update_service.log')
+    logHandler.setLevel(logging.INFO)
+    logHandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+    logger.addHandler(logHandler)
+
     dbConfig = config.getConfig()
     connection = MySQLdb.connect(
         host = dbConfig['host'],
@@ -320,8 +330,10 @@ if __name__ == '__main__':
     warnings.filterwarnings('ignore', category = MySQLdb.Warning)
 
     if not tablesExist(connection):
+        logger.info('Tables and views do not exist; creating.')
         createTablesAndViews(connection)
 
+    logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
     updateDataForDate(connection, datetime.datetime.today())
 
     connection.close()
