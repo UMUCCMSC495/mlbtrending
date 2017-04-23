@@ -287,8 +287,9 @@ def createTablesAndViews(connection):
     cursor.close()
 
 def updateDataForDate(connection, date, onlyIfNewer = True):
-    logger = logging.getLogger(__name__)
-    logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
+    #logger = logging.getLogger(__name__)
+    #logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
+    print('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
 
     apiUrl = getMLBApiUrlString(date)
 
@@ -302,24 +303,29 @@ def updateDataForDate(connection, date, onlyIfNewer = True):
 
             saveData(connection, dataDate, teams, games)
 
-            logger.info('Update completed successfully.')
+            #logger.info('Update completed successfully.')
+            print('Update completed successfully.')
         else:
-            logger.info('Data was already up-to-date.')
+            #logger.info('Data was already up-to-date.')
+            print('Data was already up-to-date.')
     except urllib.error.URLError as e:
-        logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
-        logger.error("\tat: {0}".format(apiUrl))
+        #logger.error('Failed to obtain MLB API data: {0}'.format(e.reason))
+        #logger.error("\tat: {0}".format(apiUrl))
+        print('Failed to obtain MLB API data: {0}'.format(e.reason))
+        print("\tat: {0}".format(apiUrl))
     except Exception as e:
-        logger.error(e.reason)
+        #logger.error(e.reason)
+        print(e.reason)
 
 if __name__ == '__main__':
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
+    # logger = logging.getLogger(__name__)
+    # logger.setLevel(logging.INFO)
 
-    logHandler = logging.FileHandler('logs/update_service.log')
-    logHandler.setLevel(logging.INFO)
-    logHandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    # logHandler = logging.FileHandler('logs/update_service.log')
+    # logHandler.setLevel(logging.INFO)
+    # logHandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-    logger.addHandler(logHandler)
+    # logger.addHandler(logHandler)
 
     dbConfig = config.getConfig()
 
@@ -337,11 +343,13 @@ if __name__ == '__main__':
         warnings.filterwarnings('ignore', category = MySQLdb.Warning)
 
         if not tablesExist(connection):
-            logger.info('Tables and views do not exist; creating.')
+            #logger.info('Tables and views do not exist; creating.')
+            print('Tables and views do not exist; creating.')
             createTablesAndViews(connection)
 
         updateDataForDate(connection, datetime.datetime.today())
 
         connection.close()
     except MySQLdb.Error as e:
-        logger.error(str(e))
+        #logger.error(str(e))
+        print(str(e))
