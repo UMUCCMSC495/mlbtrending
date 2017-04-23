@@ -61,7 +61,7 @@ def getDates(rawData):
     # Convert to timezone-unaware type
     dataDate = dataDate.replace(tzinfo = None)
 
-    gameDate = datetime.date(int(rawData['year']), int(rawData['month']), int(rawData['day']))
+    gameDate = datetime.datetime(int(rawData['year']), int(rawData['month']), int(rawData['day']))
 
     return (dataDate, gameDate)
 
@@ -114,7 +114,9 @@ def loadGameData(gameDate, rawData):
         else:
             homeTeam = teams[homeTeamAbbr]
 
-        game = Game(gameDate, awayTeam, homeTeam)
+        (gameHour, gameMinute) = gameData['time'].split(':')
+        gameTime = gameDate.replace(hour = int(gameHour), minute = int(gameMinute))
+        game = Game(gameTime, awayTeam, homeTeam)
 
         # Obtain inning number
         if gameData['status']['status'] == 'In Progress':
@@ -291,6 +293,6 @@ if __name__ == '__main__':
     if not tablesExist(connection):
         createTablesAndViews(connection)
 
-    updateDataForDate(connection, datetime.date.today())
+    updateDataForDate(connection, datetime.datetime.today())
 
     connection.close()
