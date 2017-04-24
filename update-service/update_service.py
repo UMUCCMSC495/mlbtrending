@@ -64,7 +64,6 @@ def getDates(rawData):
 
     gameDate = datetime.datetime(int(rawData['year']), int(rawData['month']), int(rawData['day']))
 
-    dataDate = dataDate.replace(hour = 0, minute = 0, second = 0)
     gameDate = gameDate.replace(hour = 0, minute = 0, second = 0)
 
     return (dataDate, gameDate)

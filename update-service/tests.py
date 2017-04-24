@@ -42,6 +42,8 @@ class TestUpdateService(unittest.TestCase):
 
         (dataDate, gameDate) = update_service.getDates(rawData)
 
+        dataDate = dataDate.replace(hour = 0, minute = 0, second = 0)
+
         self.assertEqual(trueDataDate, dataDate)
         self.assertEqual(trueGameDate, gameDate)
 
