@@ -331,7 +331,6 @@ if __name__ == '__main__':
     try:
         connection = MySQLdb.connect(
             host = dbConfig['host'],
-            port = dbConfig['port'],
             user = dbConfig['username'],
             passwd = dbConfig['password'],
             db = dbConfig['database']
