@@ -7,7 +7,8 @@ class UrlMappings {
 			}
 		}
 
+		"/info/$action?/$id?(.${format})?"(controller: 'info', namespace: 'common')
+		
 		"/"(view:"/index")
-		"500"(view:'/error')
 	}
 }
