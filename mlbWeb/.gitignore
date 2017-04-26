@@ -1,0 +1,13 @@
+.project
+.classpath
+.buildpath
+.springbeans
+/.stacktrace.log
+/logs
+/*.war
+/*.zip
+/plugin.xml
+/plugins
+/web-app/plugins
+/target
+/target-eclipse
