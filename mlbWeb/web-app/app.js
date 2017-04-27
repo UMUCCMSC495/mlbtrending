@@ -20,7 +20,7 @@ Ext.application({
 	launchApp: function() 
 	{
 		MlbApp.common.Globals.appInit(function(){
-			Ext.create('MlbApp.view.Viewport', {});
+			Ext.create('MlbApp.view.Viewport', {width: 1000});
 		});
 	}
 })
