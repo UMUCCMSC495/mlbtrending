@@ -11,16 +11,20 @@ class ApiController {
         
         switch (when) {
         case "yesterday":
-            // TODO: Limit to only yesterday's games
+            def from = new Date().clearTime().minus(1)
+            def to = from.plus(1)
+            
             JSON.use("deep") {
-                render Game.find().list() as JSON
+                render Game.findAllByGameDateBetween(from, to) as JSON
             }
             break
         case "today":
         default:
-            // TODO: Limit to only today's games
+            def from = new Date().clearTime()
+            def to = from.plus(1)
+            
             JSON.use("deep") {
-                render Game.find().list() as JSON
+                render Game.findAllByGameDateBetween(from, to) as JSON
             }
             break
         }
