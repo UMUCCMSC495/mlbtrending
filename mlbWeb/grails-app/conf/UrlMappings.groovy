@@ -6,6 +6,8 @@ class UrlMappings {
             controller = "api"
         }
 
+        "/$controller/$action?/$id?"()
+
         "/"(view:"/index")
     }
 }
