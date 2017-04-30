@@ -11,8 +11,8 @@ class ApiController {
         
         switch (when) {
         case "yesterday":
-            def from = new Date().clearTime().minus(1)
-            def to = from.plus(1)
+            def from = new Date().clearTime() - 1
+            def to = from + 1
             
             JSON.use("deep") {
                 render Game.findAllByGameDateBetween(from, to) as JSON
@@ -21,7 +21,7 @@ class ApiController {
         case "today":
         default:
             def from = new Date().clearTime()
-            def to = from.plus(1)
+            def to = from + 1
             
             JSON.use("deep") {
                 render Game.findAllByGameDateBetween(from, to) as JSON
@@ -35,14 +35,14 @@ class ApiController {
         
         def team = Team.findByAbbrIlike(teamAbbr) ?: Team.read(1)
         
-        // TODO: Limit to games in the past 7 days
-        def awayGames = Game.findAllByAway(team)
-        def homeGames = Game.findAllByHome(team)
-        
-        def allGames = awayGames + homeGames
-        
-        JSON.use("deep") {
-            render allGames as JSON
+        if (null == team) {
+            // Database contains no team information
+            render ""
+        }
+        else {
+            JSON.use("deep") {
+                render Game.recentGames(team).list() as JSON
+            }
         }
     }
     
