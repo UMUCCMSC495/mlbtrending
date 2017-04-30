@@ -10,35 +10,51 @@ hibernate {
 
 // environment specific settings
 environments {
-	development {
+    development {
         dataSource {
-			pooled = true
-			dbCreate = "create-drop"
-			url = "jdbc:mysql://localhost:3306/localmlbtesting"
-			driverClassName = "com.mysql.jdbc.Driver"
-			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-			username = "root"
-			password = "letmein"
+            pooled = true
+            dbCreate = "create-drop"
+            
+            driverClassName = "com.mysql.jdbc.Driver"
+            dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+            
+            uri = new URI(System.env.DATABASE_URL?:"mysql://baseball:glove@localhost:3306/baseballdb")
+            url = "jdbc:mysql://" + uri.host + ":" + uri.port + uri.path
+            username = uri.userInfo.split(":")[0]
+            password = uri.userInfo.split(":")[1]
         }
     }
     test {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+            pooled = true
+            dbCreate = "validate"
+            
+            driverClassName = "com.mysql.jdbc.Driver"
+            dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+            
+            uri = new URI(System.env.DATABASE_URL?:"mysql://baseball:glove@localhost:3306/baseballdb")
+            url = "jdbc:mysql://" + uri.host + ":" + uri.port + uri.path
+            username = uri.userInfo.split(":")[0]
+            password = uri.userInfo.split(":")[1]
         }
     }
     production {
         dataSource {
-			pooled = true
-			url = "jdbc:mysql://localhost/localmlbtesting"
-			driverClassName = "com.mysql.jdbc.Driver"
-			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-			username = "root"
-			password = "letmein"
+            pooled = true
+            dbCreate = "validate"
+            
+            driverClassName = "com.mysql.jdbc.Driver"
+            dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+            
+            uri = new URI(System.env.DATABASE_URL?:"mysql://baseball:glove@localhost:3306/baseballdb")
+            url = "jdbc:mysql://" + uri.host + ":" + uri.port + uri.path
+            username = uri.userInfo.split(":")[0]
+            password = uri.userInfo.split(":")[1]
+            
             properties {
-               validationQuery="SELECT 1"
-			   validationQueryTimeout = 3
-			   validationInterval = 15000
+                validationQuery="SELECT 1"
+                validationQueryTimeout = 3
+                validationInterval = 15000
             }
         }
     }

@@ -1,16 +1,17 @@
 package mlbweb
 
 class Team {
-
-	String abbr
-	String name
-	String city
+    String abbr
+    String name
+    String city
 	
     static constraints = {
+        abbr maxSize: 16, unique: true
+        name maxSize: 128
+        city maxSize: 128
     }
 	
-	static mapping = {
-		table 't_team'
-		version false
-	}
+    static mapping = {
+        version false
+    }
 }
