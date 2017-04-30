@@ -1,14 +1,11 @@
 class UrlMappings {
+    static mappings = {
+        "/info/$action?/$id?(.${format})?"(controller: 'info', namespace: 'common')
 
-	static mappings = {
-		"/$controller/$action?/$id?"{
-			constraints {
-				// apply constraints here
-			}
-		}
+        "/api/$action/(${arg})?" {
+            controller = "api"
+        }
 
-		"/info/$action?/$id?(.${format})?"(controller: 'info', namespace: 'common')
-		
-		"/"(view:"/index")
-	}
+        "/"(view:"/index")
+    }
 }
