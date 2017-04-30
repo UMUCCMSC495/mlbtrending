@@ -9,7 +9,7 @@ import logging
 
 class Game:
     def __init__(self, date, awayTeam, homeTeam):
-        self.id = 0
+        self.id = -1
 
         self.date = date
         self.awayTeam = awayTeam
@@ -32,7 +32,7 @@ class Game:
 
 class Team:
     def __init__(self, name, abbr, city):
-        self.id = 0
+        self.id = -1
 
         self.name = name
         self.abbr = abbr
@@ -182,22 +182,33 @@ def saveData(connection, dataDate, teams, games):
     cursor = connection.cursor()
 
     # Save teams
-    insertTeam = "INSERT IGNORE INTO t_team (abbr, name, city) VALUES ('{0}', '{1}', '{2}')"
+    insertTeam = "INSERT IGNORE INTO team (abbr, name, city) VALUES ('{0}', '{1}', '{2}')"
     for team in teams.values():
         cursor.execute(insertTeam.format(team.abbr, team.name, team.city))
     connection.commit()
 
     # Retrieve team IDs
-    cursor.execute('SELECT id, abbr FROM t_team;')
+    cursor.execute('SELECT id, abbr FROM team;')
     for row in cursor.fetchall():
         # Not every team plays every day; need to ensure that the list of teams
         # that played today includes the given abbreviation
         if row[1] in teams.keys():
             teams[row[1]].id = row[0]
 
-    # Save game and inning data
+    # Insert games
+    deleteInnings = """
+DELETE inning.* FROM inning
+INNER JOIN game ON inning.game_id = game.id
+WHERE game.game_date BETWEEN '{0:%Y-%m-%d} 00:00:00' AND '{1:%Y-%m-%d} 00:00:00';
+"""
+
+    deleteGames = """
+DELETE FROM game
+WHERE game_date BETWEEN '{0:%Y-%m-%d} 00:00:00' AND '{1:%Y-%m-%d} 00:00:00';
+"""
+
     insertGame = """
-INSERT INTO t_game (game_date, away_id, home_id,
+INSERT INTO game (game_date, away_id, home_id,
     status, location,
     away_runs, away_hits, away_errors, away_home_runs,
     home_runs, home_hits, home_errors, home_home_runs)
@@ -205,40 +216,55 @@ VALUES ('{0:%Y-%m-%d %H:%M:%S}', {1}, {2},
     '{3}', '{4}',
     {5},  {6},  {7},  {8},
     {9}, {10}, {11}, {12})
-ON DUPLICATE KEY UPDATE
-    game_date = VALUES(game_date),
-    status = VALUES(status),
-    away_runs = VALUES(away_runs), away_hits = VALUES(away_hits),
-        away_errors = VALUES(away_errors), away_home_runs = VALUES(away_home_runs),
-    home_runs = VALUES(home_runs), home_hits = VALUES(home_hits),
-        home_errors = VALUES(home_errors), home_home_runs = VALUES(home_home_runs)
+"""
+
+    selectGames = """
+SELECT id, away_id, home_id, game_date
+FROM game
+WHERE game_date BETWEEN '{0:%Y-%m-%d} 00:00:00' AND '{1:%Y-%m-%d} 00:00:00';
 """
 
     insertInning = """
-INSERT INTO t_inning (game_date, away_id, home_id, inning_number, away_runs, home_runs)
-VALUES ('{0:%Y-%m-%d %H:%M:%S}', {1}, {2}, {3}, {4}, {5})
-ON DUPLICATE KEY UPDATE
-    game_date = VALUES(game_date),
-    away_runs = VALUES(away_runs),
-    home_runs = VALUES(home_runs);
+INSERT INTO inning (game_id, inning_number, away_runs, home_runs)
+VALUES ('{0}', {1}, {2}, {3})
 """
+    # Ensure there was at least one game to retreive
+    if len(games) > 0:
+        startDate = games[0].date
+        endDate = startDate + datetime.timedelta(days = 1)
 
-    for game in games:
-        cursor.execute(insertGame.format(
-            game.date, game.awayTeam.id, game.homeTeam.id,
-            game.status, game.location,
-            game.awayTeamRuns, game.awayTeamHits, game.awayTeamErrors, game.awayTeamHomeRuns,
-            game.homeTeamRuns, game.homeTeamHits, game.homeTeamErrors, game.homeTeamHomeRuns)
-        )
+        # Delete the innings and games in the table
+        cursor.execute(deleteInnings.format(startDate, endDate))
+        cursor.execute(deleteGames.format(startDate, endDate))
+
+        gamesByTeamAndDate = {}
+
+        # Re-add the games
+        for game in games:
+            key = '{0}-{1}@{2:%Y-%m-%d %H:%M:%S}'.format(game.awayTeam.id, game.homeTeam.id, game.date)
+            gamesByTeamAndDate[key] = game
+
+            cursor.execute(insertGame.format(
+                game.date, game.awayTeam.id, game.homeTeam.id,
+                game.status, game.location,
+                game.awayTeamRuns, game.awayTeamHits, game.awayTeamErrors, game.awayTeamHomeRuns,
+                game.homeTeamRuns, game.homeTeamHits, game.homeTeamErrors, game.homeTeamHomeRuns)
+            )
+
+        # Retrieve the game IDs
+        cursor.execute(selectGames.format(startDate, endDate))
+        for row in cursor.fetchall():
+            key = '{0}-{1}@{2:%Y-%m-%d %H:%M:%S}'.format(row[1], row[2], row[3])
+            gamesByTeamAndDate[key].id = row[0]
 
         # Save inning data
-        inningNo = 1
-        for inning in game.innings:
-            cursor.execute(insertInning.format(
-                game.date, game.awayTeam.id, game.homeTeam.id, inningNo, inning.awayRuns, inning.homeRuns)
-            )
-            inningNo += 1
-
+        for game in games:
+            inningNo = 1
+            for inning in game.innings:
+                cursor.execute(insertInning.format(
+                    game.id, inningNo, inning.awayRuns, inning.homeRuns)
+                )
+                inningNo += 1
 
     # Update the last modified date
     cursor.execute("UPDATE t_meta SET last_modified = '{0}';".format(dataDate))
@@ -249,13 +275,7 @@ ON DUPLICATE KEY UPDATE
 def tablesExist(connection):
     """Returns true if necessary tables and views appear to exist."""
     tablesNeeded = [
-        't_meta',
-        't_team',
-        't_game',
-        't_inning',
-        'team',
-        'game',
-        'inning'
+        't_meta'
         # TODO: add the aggregate views once they're created
     ]
 
@@ -281,13 +301,16 @@ def createTablesAndViews(connection):
 
     commands = contents.split(';')
     for command in commands:
-        cursor.execute(command)
+        command = command.strip()
+        if len(command) > 0:
+            cursor.execute(command)
 
     cursor.close()
+    connection.commit()
 
 def updateDataForDate(connection, date, onlyIfNewer = True):
     #logger = logging.getLogger(__name__)
-    #logger.info('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
+    #logger.info('Obtaining data for {:%Y-%m-%d}'.format(date.datetime.today()))
     print('Obtaining data for {:%Y-%m-%d}'.format(datetime.datetime.today()))
 
     apiUrl = getMLBApiUrlString(date)
