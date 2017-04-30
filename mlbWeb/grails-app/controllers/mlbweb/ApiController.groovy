@@ -7,11 +7,9 @@ class ApiController {
     }
     
     def games() {
-        def arg = params.arg ?: "today"
+        def when = params.arg ?: "today"
         
-        def st
-        
-        switch (arg) {
+        switch (when) {
         case "yesterday":
             // TODO: Limit to only yesterday's games
             JSON.use("deep") {
@@ -27,4 +25,22 @@ class ApiController {
             break
         }
     }
+    
+    def recentgames() {
+        def teamAbbr = params.arg ?: "none"
+        
+        def team = Team.findByAbbrIlike(teamAbbr) ?: Team.read(1)
+        
+        // TODO: Limit to games in the past 7 days
+        def awayGames = Game.findAllByAway(team)
+        def homeGames = Game.findAllByHome(team)
+        
+        def allGames = awayGames + homeGames
+        
+        JSON.use("deep") {
+            render allGames as JSON
+        }
+    }
+    
+    // TODO: API calls for game stats
 }
