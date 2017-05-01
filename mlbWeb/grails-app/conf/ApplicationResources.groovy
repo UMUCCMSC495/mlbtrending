@@ -21,6 +21,9 @@ modules = {
 	views {
 		dependsOn 'common'
 		resource url:'app/view/Viewport.js'
+		resource url:'app/view/Home.js'
+		resource url:'app/view/Teams.js'
+		resource url:'app/view/Plotter.js'
 	}
 	mlb_app {
 		dependsOn 'views'
