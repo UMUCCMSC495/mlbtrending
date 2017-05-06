@@ -219,6 +219,7 @@ class ApiController {
                 summary.data.series.winrates = new ArrayList()
                 
                 summary.data.years.each { year, yearData ->
+                    summary.data.series.years.push(year)
                     summary.data.series.games.push(yearData.games)
                     summary.data.series.wins.push(yearData.wins)
                     summary.data.series.losses.push(yearData.losses)
