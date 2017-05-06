@@ -42,13 +42,24 @@ Ext.define('MlbApp.view.TeamHistory', {
     				    	var row3 = '<tr><td align="center">' + games[i].home.abbr + '</td>';
     				    	
     				    	//Header: dynamic number of innings
-//    				    	for (var j=0; j <= Math.min(9, games[i].innings.length); j++) 
-        				    for (var j=0; j <= games[i].innings.length; j++) 
+        				    for (var j=0; j < games[i].innings.length; j++) 
     				    	{
     				    		row1 += '<th>' + (parseInt(j) + 1) + '</th>';
     				    		row2 += '<td>' + games[i].innings[j].awayRuns + '</td>';
     				    		row3 += '<td>' + games[i].innings[j].homeRuns + '</td>';
     				    	}
+                            
+                            // Ensure at least 9 innings
+                            if (games[i].innings.length < 9) {
+                                for (var j=games[i].innings.length; j < 9; j++) {
+                                    row1 += '<th>' + (parseInt(j) + 1) + '</th>';
+                                }
+                                
+                                var paddingColumns = 9 - games[i].innings.length;
+                                
+                                row2 += '<td colspan="' + paddingColumns + '"></td>';
+                                row3 += '<td colspan="' + paddingColumns + '"></td>';
+                            }
     				    	
     				    	//Header: Runs, Errors, Homeruns
     				    	row1 += '<th>R</th><th>E</th><th>HR</th></tr>';
