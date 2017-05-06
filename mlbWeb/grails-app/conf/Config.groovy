@@ -62,11 +62,12 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		grails.serverURL = "http://localhost:8080/mlbWeb/"
+		grails.serverURL = "http://localhost:8080/"
     }
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
+		grails.serverURL = "https://mlb-stats-now.herokuapp.com/"
     }
 }
 

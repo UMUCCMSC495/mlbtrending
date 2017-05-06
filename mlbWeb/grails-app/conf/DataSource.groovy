@@ -13,7 +13,6 @@ environments {
     development {
         dataSource {
             pooled = true
-            dbCreate = "create"
             
             driverClassName = "com.mysql.jdbc.Driver"
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect

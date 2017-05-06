@@ -18,12 +18,22 @@ modules = {
 		dependsOn 'ext_resources'
 		resource url:'app/common/Globals.js'
 	}
-	views {
+	model {
 		dependsOn 'common'
+		resource url:'app/model/Team.js'
+	}
+	store {
+		dependsOn 'model'
+		resource url:'app/store/Teams.js'
+	}
+	views {
+		dependsOn 'common, store'
 		resource url:'app/view/Viewport.js'
 		resource url:'app/view/Home.js'
 		resource url:'app/view/Teams.js'
+		resource url:'app/view/TeamHistory.js'
 		resource url:'app/view/Plotter.js'
+		resource url:'app/view/components/TeamCombobox.js'
 	}
 	mlb_app {
 		dependsOn 'views'

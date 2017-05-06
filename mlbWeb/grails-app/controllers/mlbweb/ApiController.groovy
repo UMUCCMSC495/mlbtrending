@@ -3,7 +3,7 @@ import grails.converters.JSON
 
 class ApiController {
     def teams() {
-        render Team.find().list() as JSON
+        render Team.listOrderByName() as JSON
     }
     
     def games() {
@@ -30,8 +30,9 @@ class ApiController {
         }
     }
     
-    def recentgames() {
-        def teamAbbr = params.arg ?: "none"
+    def recentgames() 
+	{
+        def teamAbbr = params.abbr ?: "none"
         
         def team = Team.findByAbbrIlike(teamAbbr) ?: Team.read(1)
         
