@@ -41,13 +41,14 @@ if __name__ == '__main__':
     # Removed 2015 - too much data for ClearDB ignite instance (limited to 5 MB)
 
     # 2016 MLB season: 4/3/2016 - 11/2/2016
-    start = datetime.strptime('04/03/2016', '%m/%d/%Y')
-    end = datetime.strptime('11/02/2016', '%m/%d/%Y')
-    print('2016 MLB season')
-    updateDataForDates(start, end)
+    #start = datetime.strptime('04/03/2016', '%m/%d/%Y')
+    #end = datetime.strptime('11/02/2016', '%m/%d/%Y')
+    #print('2016 MLB season')
+    #updateDataForDates(start, end)
 
     # 2017 MLB season: 4/2/2017 - 11/1/2017
-    start = datetime.strptime('04/02/2017', '%m/%d/%Y')
+    #start = datetime.strptime('04/02/2017', '%m/%d/%Y')
+    start = datetime.strptime('04/30/2017', '%m/%d/%Y')
     end = datetime.strptime('11/01/2017', '%m/%d/%Y')
     today = datetime.today()
 

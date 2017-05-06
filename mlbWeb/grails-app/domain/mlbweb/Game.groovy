@@ -51,5 +51,7 @@ class Game {
 
     static mapping = {
         version false
+        sort gameDate: "asc"
+        innings sort: "inningNumber", order: "asc"
     }
 }

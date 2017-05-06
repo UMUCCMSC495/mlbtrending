@@ -15,5 +15,6 @@ class Inning {
 
     static mapping = {
         version false
+        sort inningNumber: "asc"
     }
 }
