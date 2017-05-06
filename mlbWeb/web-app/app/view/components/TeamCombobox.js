@@ -7,15 +7,6 @@ Ext.define('components.TeamCombobox', {
     queryMode: 'local',
     displayField: 'name',
     valueField: 'abbr',
-    listeners: {
-    	'select':function(combo, records, eOpts){
-    		var teamHistoryTitle = Ext.ComponentQuery.query('#teamhistorytitle')[0];
-    		var teamhistorypanel = Ext.ComponentQuery.query('#teamhistorypanel')[0];
-    		
-    		teamHistoryTitle.setTitle(records[0].data.city + ' ' + records[0].data.name + ' - Recent Games');
-    		teamhistorypanel.loadGames(records[0].data.abbr);
-    	}
-    },
     
     initComponent: function() {
 

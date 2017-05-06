@@ -10,7 +10,9 @@ Ext.define('MlbApp.view.Home', {
 		html: '<h1 class="x-panel-header">Home</h1>',
 		border: false
 	},{
-		xtype: 'todaysgamespanel'
+		xtype: 'todaysgamespanel',
+		margin: '0 0 20 0'
+			
 	},{
 		xtype: 'yesterdaysgamespanel'
 	}]

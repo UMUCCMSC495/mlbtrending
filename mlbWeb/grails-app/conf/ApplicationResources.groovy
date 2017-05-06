@@ -35,6 +35,7 @@ modules = {
 		resource url:'app/view/TodaysGames.js'
 		resource url:'app/view/YesterdaysGames.js'
 		resource url:'app/view/Plotter.js'
+		resource url:'app/view/TeamChart.js'
 		resource url:'app/view/components/TeamCombobox.js'
 	}
 	mlb_app {
