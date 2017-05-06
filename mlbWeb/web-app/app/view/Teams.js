@@ -5,7 +5,7 @@ Ext.define('MlbApp.view.Teams', {
 	defaults: {
 		padding: '10 10 10 10'
 	},
-	autoscroll: true,
+//	autoscroll: true,
 	items: [{
 		html: '<h1 class="x-panel-header">Team Stats</h1>',
 		border: false
@@ -15,8 +15,7 @@ Ext.define('MlbApp.view.Teams', {
 		xtype: 'panel',
 		title: 'Team History',
 		alias: 'widget.teamhistorytitle',
-		itemId: 'teamhistorytitle',
-		autoScroll: true
+		itemId: 'teamhistorytitle'
 	},{
 		xtype: 'teamhistorypanel'
 	}]
