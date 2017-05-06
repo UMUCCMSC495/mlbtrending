@@ -65,7 +65,6 @@ class ApiController {
             summary.data = new LinkedHashMap()
             summary.data.years = new LinkedHashMap()
             summary.data.series = new LinkedHashMap()
-            summary.data.series.years = new LinkedHashMap()
             
             def games = Game.countAllBy(team, grouping).list()
             def wins = Game.countWinsBy(team, grouping).list()
@@ -116,6 +115,7 @@ class ApiController {
                  * }
                  */
                 
+                // Data objects
                 ["games": games, "wins": wins, "losses": losses].each { dataTypeName, data ->
                     data.each { row ->
                         def yearContainer = summary.data.years.get(row[0], new LinkedHashMap())
@@ -125,18 +125,18 @@ class ApiController {
                     }
                 }
                 
-                // Create data objects
                 summary.data.years.each { year, yearData ->
                     yearData.each { month, monthData ->
                         def w = monthData.get('wins', 0)
                         monthData.winrate = 
-                                (w / monthData.games * 100).setScale(1, RoundingMode.HALF_UP).toString() + "%"
+                                (w / monthData.games).setScale(3, RoundingMode.HALF_UP)
                     }
                 }
                 
-                // Create data series
+                // Data series
+                summary.data.series.years = new LinkedHashMap()
+                
                 def minMonth = 12
-                summary.data.series.months = [ "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]
                 
                 summary.data.years.each { year, yearData ->
                     summary.data.series.years[year] = new LinkedHashMap()
@@ -157,27 +157,47 @@ class ApiController {
                     }
                 }
                 
-                // minMonth - 1
+                def months = [
+                    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                ]
+                minMonth -= 1
+                summary.data.series.months = months[minMonth..11]
             }
             // Group by year
             else {
                 /**
                  * data: {
-                 *     2016: {
-                 *         games: 100,
-                 *         wins: 50,
-                 *         losses: 50
-                 *         winrate: 0.5
+                 *     Data objects
+                 * 
+                 *     years: {
+                 *         2016: {
+                 *             games: 100,
+                 *             wins: 50,
+                 *             losses: 50
+                 *             winrate: 0.5
+                 *         },
+                 *         2017: {
+                 *             games: 100,
+                 *             wins: 60,
+                 *             losses: 40,
+                 *             winrate: 0.6
+                 *         }
                  *     },
-                 *     2017: {
-                 *         games: 100,
-                 *         wins: 60,
-                 *         losses: 40,
-                 *         winrate: 0.6
+                 *     
+                 *     Data series
+                 *     
+                 *     series: {
+                 *         years: [ 2016, 2017 ],
+                 *         games: [ 130, 130 ],
+                 *         wins: [ 120, 110 ],
+                 *         losses: [ 110, 120 ],
+                 *         winrates: [ 55%, 45% ]
                  *     }
                  * }
                  */
                 
+                // Data objects
                 ["games": games, "wins": wins, "losses": losses].each { dataTypeName, data ->
                     data.each { row ->
                         def yearContainer = summary.data.years.get(row[0], new LinkedHashMap())
@@ -188,7 +208,21 @@ class ApiController {
 
                 summary.data.years.each { year, data ->
                     def w = data.get('wins', 0)
-                    data.winrate = (w / data.games * 100).setScale(1, RoundingMode.HALF_UP).toString() + "%"
+                    data.winrate = (w / data.games).setScale(3, RoundingMode.HALF_UP)
+                }
+                
+                // Data series
+                summary.data.series.years = new ArrayList()
+                summary.data.series.games = new ArrayList()
+                summary.data.series.wins = new ArrayList()
+                summary.data.series.losses = new ArrayList()
+                summary.data.series.winrates = new ArrayList()
+                
+                summary.data.years.each { year, yearData ->
+                    summary.data.series.games.push(yearData.games)
+                    summary.data.series.wins.push(yearData.wins)
+                    summary.data.series.losses.push(yearData.losses)
+                    summary.data.series.winrates.push(yearData.winrate)
                 }
             }
             
