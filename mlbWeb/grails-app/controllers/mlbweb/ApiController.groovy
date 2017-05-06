@@ -32,13 +32,12 @@ class ApiController {
     
     def recentgames() 
 	{
-        def teamAbbr = params.abbr ?: "none"
+        def teamAbbr = params.team ?: "none"
         
-        def team = Team.findByAbbrIlike(teamAbbr) ?: Team.read(1)
+        def team = Team.findByAbbrIlike(teamAbbr)
         
         if (null == team) {
-            // Database contains no team information
-            render ""
+            response.status = 404
         }
         else {
             JSON.use("deep") {
@@ -47,5 +46,24 @@ class ApiController {
         }
     }
     
-    // TODO: API calls for game stats
+    def stats() {
+        def teamAbbr = params.team ?: "none"
+        def grouping = params.grouping ?: "year"
+        
+        def team = Team.findByAbbrIlike(teamAbbr)
+        
+        if (null == team) {
+            response.status = 404
+        }
+        else {
+            def summary = new LinkedHashMap()
+            summary.abbr = team.abbr
+            summary.city = team.city
+            summary.name = team.name
+            summary.games = Game.countAllBy(team, grouping).list()
+            summary.wins = Game.countWinsBy(team, grouping).list()
+            summary.losses = Game.countLossesBy(team, grouping).list()
+            render summary as JSON
+        }
+    }
 }

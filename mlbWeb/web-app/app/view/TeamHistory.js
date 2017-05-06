@@ -11,8 +11,7 @@ Ext.define('MlbApp.view.TeamHistory', {
     	var me = this;
     	
     	Ext.Ajax.request({
-    		url: MlbApp.common.Globals.root + "api/recentgames",
-    		params: {'abbr':abbr},
+    		url: MlbApp.common.Globals.root + "api/recentgames/" + abbr,
     		success: function(response)
     		{
     			var games = Ext.JSON.decode(response.responseText, true);

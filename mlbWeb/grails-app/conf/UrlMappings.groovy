@@ -1,12 +1,24 @@
 class UrlMappings {
     static mappings = {
-        "/info/$action?/$id?(.${format})?"(controller: 'info', namespace: 'common')
-
-        "/api/$action/(${arg})?" {
+        "/api/teams" {
             controller = "api"
+            action = "teams"
         }
-
-        "/$controller/$action?/$id?"()
+        
+        "/api/games/$when" {
+            controller = "api"
+            action = "games"
+        }
+        
+        "/api/recentgames/$team?" {
+            controller = "api"
+            action = "recentgames"
+        }
+        
+        "/api/stats/$team/$grouping?" {
+            controller = "api"
+            action = "stats"
+        }
 
         "/"(view:"/index")
     }

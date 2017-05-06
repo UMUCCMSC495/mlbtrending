@@ -7,15 +7,7 @@ Ext.application({
 	init: function() 
 	{
 		var me = this;
-		
-		Ext.Ajax.request({
-			url: MlbApp.common.Globals.root + "main/test",
-			success: function(response) {
-				var json = Ext.JSON.decode(response.responseText);
-				MlbApp.common.Globals.name = json.person.name;
-				me.launchApp();
-			}
-		})
+        me.launchApp();
 	},
 	launchApp: function() 
 	{

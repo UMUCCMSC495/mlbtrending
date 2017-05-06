@@ -14,17 +14,8 @@ Ext.define('MlbApp.common.Globals',{
 	 */
 	appInit: function(callback)
 	{
-		Ext.Ajax.request({
-			url: MlbApp.common.Globals.root + "info",
-			success: function(response) 
-			{
-				var json = Ext.JSON.decode(response.responseText);
-				Ext.apply(MlbApp.common.Globals, json);
-				
-				if(callback)
-					callback();
-			}
-		})
-		
+        if(callback) {
+            callback();
+        }
 	}
 });
