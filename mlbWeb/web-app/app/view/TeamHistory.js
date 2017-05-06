@@ -66,7 +66,10 @@ Ext.define('MlbApp.view.TeamHistory', {
     				    	row2 += '<td>' + games[i].awayRuns + '</td><td>' + games[i].awayErrors + '</td><td>' + games[i].awayHomeRuns + '</td></tr>';
     				    	row3 += '<td>' + games[i].homeRuns + '</td><td>' + games[i].homeErrors + '</td><td>' + games[i].homeHomeRuns + '</td></tr>';
     				    	
-    				    	html += row1 + row2 + row3 + '</table>';
+    				    	html += row1;
+    				    	html += row2;
+    				    	html += row3;
+    				    	html += '</table>';
     				    	
     				    	return html;
     					}

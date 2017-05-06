@@ -14,6 +14,7 @@ Ext.define('MlbApp.view.Viewport', {
 			defaults: {
 				width: 800
 			},
+			autoScroll: true,
 			
 		    items: [{
 		    	xtype: 'panel',
