@@ -50,12 +50,6 @@ environments {
             url = "jdbc:mysql://" + uri.host + ":" + uri.port + uri.path
             username = uri.userInfo.split(":")[0]
             password = uri.userInfo.split(":")[1]
-            
-            properties {
-                validationQuery="SELECT 1"
-                validationQueryTimeout = 3
-                validationInterval = 15000
-            }
         }
     }
 }
