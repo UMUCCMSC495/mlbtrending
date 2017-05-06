@@ -42,7 +42,7 @@ Ext.define('MlbApp.view.TeamHistory', {
     				    	var row3 = '<tr><td align="center">' + games[i].home.abbr + '</td>';
     				    	
     				    	//Header: dynamic number of innings
-        				    for (var j=0; j < games[i].innings.length; j++) 
+        				    for (var j=0; j < games[i].innings.length; j++)
     				    	{
     				    		row1 += '<th>' + (parseInt(j) + 1) + '</th>';
     				    		row2 += '<td>' + games[i].innings[j].awayRuns + '</td>';
