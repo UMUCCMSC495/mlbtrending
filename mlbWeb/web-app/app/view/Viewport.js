@@ -5,6 +5,8 @@ Ext.define('MlbApp.view.Viewport', {
 		align: 'center',
 		pack: 'start',
 	},
+	autoScroll: true,
+	autoShow: true,
 
 	initComponent: function() 
 	{
@@ -14,7 +16,6 @@ Ext.define('MlbApp.view.Viewport', {
 			defaults: {
 				width: 800
 			},
-			autoScroll: true,
 			
 		    items: [{
 		    	xtype: 'panel',
@@ -25,7 +26,7 @@ Ext.define('MlbApp.view.Viewport', {
 		        xtype: 'tabpanel',
 		        activeTab: 0,
 		        defaults: {
-		        	height: 800
+		        	minHeight: 1000
 		        },
 		        items: [{
 		            xtype: 'home'

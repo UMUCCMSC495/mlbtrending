@@ -15,7 +15,8 @@ Ext.define('MlbApp.view.Teams', {
 		xtype: 'panel',
 		title: 'Team History',
 		alias: 'widget.teamhistorytitle',
-		itemId: 'teamhistorytitle'
+		itemId: 'teamhistorytitle',
+		autoScroll: true
 	},{
 		xtype: 'teamhistorypanel'
 	}]

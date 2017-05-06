@@ -32,21 +32,21 @@ Ext.define('MlbApp.view.TeamHistory', {
     					renderer: function()
     					{
     						var innings = games[i].innings.length;
-    				    	var html = '<table border=1 width="100%">';
+    				    	var html = '<table border=0 cellpadding=15 cellspacing=0 width="100%">';
     				    	
     				    	/**
     				    	 * Header: Start Rows
     				    	 */
     				    	var row1 = '<tr><th>&nbsp;</th>';
-    				    	var row2 = '<tr><td align="center">' + games[i].away.abbr + '</td>';
-    				    	var row3 = '<tr><td align="center">' + games[i].home.abbr + '</td>';
+    				    	var row2 = '<tr><td align="left"><b>' + games[i].away.abbr + '</b></td>';
+    				    	var row3 = '<tr><td align="left"><b>' + games[i].home.abbr + '</b></td>';
     				    	
     				    	//Header: dynamic number of innings
         				    for (var j=0; j < games[i].innings.length; j++)
     				    	{
     				    		row1 += '<th>' + (parseInt(j) + 1) + '</th>';
-    				    		row2 += '<td>' + games[i].innings[j].awayRuns + '</td>';
-    				    		row3 += '<td>' + games[i].innings[j].homeRuns + '</td>';
+    				    		row2 += '<td align="center"><b>' + games[i].innings[j].awayRuns + '</b></td>';
+    				    		row3 += '<td align="center"><b>' + games[i].innings[j].homeRuns + '</b></td>';
     				    	}
                             
                             // Ensure at least 9 innings
@@ -63,8 +63,8 @@ Ext.define('MlbApp.view.TeamHistory', {
     				    	
     				    	//Header: Runs, Errors, Homeruns
     				    	row1 += '<th>R</th><th>E</th><th>HR</th></tr>';
-    				    	row2 += '<td>' + games[i].awayRuns + '</td><td>' + games[i].awayErrors + '</td><td>' + games[i].awayHomeRuns + '</td></tr>';
-    				    	row3 += '<td>' + games[i].homeRuns + '</td><td>' + games[i].homeErrors + '</td><td>' + games[i].homeHomeRuns + '</td></tr>';
+    				    	row2 += '<td><b>' + games[i].awayRuns + '</b></td><td><b>' + games[i].awayErrors + '</b></td><td><b>' + games[i].awayHomeRuns + '</b></td></tr>';
+    				    	row3 += '<td><b>' + games[i].homeRuns + '</b></td><td><b>' + games[i].homeErrors + '</b></td><td><b>' + games[i].homeHomeRuns + '</b></td></tr>';
     				    	
     				    	html += row1;
     				    	html += row2;
