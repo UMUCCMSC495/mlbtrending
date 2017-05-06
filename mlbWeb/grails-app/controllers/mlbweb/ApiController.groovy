@@ -1,5 +1,6 @@
 package mlbweb
 import grails.converters.JSON
+import java.math.RoundingMode
 
 class ApiController {
     def teams() {
@@ -60,9 +61,46 @@ class ApiController {
             summary.abbr = team.abbr
             summary.city = team.city
             summary.name = team.name
-            summary.games = Game.countAllBy(team, grouping).list()
-            summary.wins = Game.countWinsBy(team, grouping).list()
-            summary.losses = Game.countLossesBy(team, grouping).list()
+            
+            /**
+             * data: {
+             *     2016: {
+             *         games: 100,
+             *         wins: 50,
+             *         losses: 50
+             *         winrate: 0.5
+             *     },
+             *     2017: {
+             *         games: 100,
+             *         wins: 60,
+             *         losses: 40,
+             *         winrate: 0.6
+             *     }
+             * }
+             */
+            summary.data = new LinkedHashMap()
+            
+            def games = Game.countAllBy(team, grouping).list()
+            def wins = Game.countWinsBy(team, grouping).list()
+            def losses = Game.countLossesBy(team, grouping).list()
+            
+            games.each {
+                def container = summary.data.get(it[0], new LinkedHashMap())
+                container.games = it[1]
+            }
+            wins.each {
+                def container = summary.data.get(it[0], new LinkedHashMap())
+                container.wins = it[1]
+            }
+            losses.each {
+                def container = summary.data.get(it[0], new LinkedHashMap())
+                container.losses = it[1]
+            }
+            
+            summary.data.each { year, data ->
+                data.winrate = (data.wins / data.games * 100).setScale(1, RoundingMode.HALF_UP).toString() + "%"
+            }
+            
             render summary as JSON
         }
     }
