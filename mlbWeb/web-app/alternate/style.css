@@ -1,0 +1,156 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #080820;
+    font: 1.1em 'Roboto Condensed';
+    margin: 0 auto;
+    min-width: 600px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+#wrapper {
+    background: #F8F8F8;
+    padding: 0 40px;
+    border-color: #f00;
+    border-style: solid;
+    border-width: 0 3px 0 3px;
+    height: 10000px;
+}
+
+h1 a {
+    color: #000000;
+}
+
+#nav {
+    color: #F3F3F3;
+    background: #E3E3E3;
+    border-top: 2px solid #D3D3D3;
+    border-bottom: 4px solid #D3D3D3;
+    font-size: 1.3em;
+    margin: 0 -40px;
+    padding: 0.2em 0;
+    text-align: right;
+}
+
+#nav a {
+    color: #113;
+    background: #F3F3F3;
+    border-top: 2px solid #C3C3C3;
+    border-left: 1px solid #A3A3A3;
+    border-bottom: 4px solid #C3C3C3;
+    padding: 0.2em 0.4em;
+    text-decoration: none;
+}
+
+#nav li a.selected {
+    font-weight: bold;
+}
+
+#nav a:hover, #nav li a.selected {
+    border-top: 2px solid #A3A3A3;
+    border-bottom: 4px solid #FF0000;
+}
+
+#nav li {
+    display: inline;
+    list-style: none;
+    
+}
+
+h2, h3 {
+    clear: both;
+}
+
+h2 {
+    color: #F3F3F3;
+    background: #222244 url(baseball100.png) no-repeat;
+    background-position: 0.25em 0.25em;
+    margin: 0.85em -20px;
+    padding: 0.1em 0.1em 0.1em 1.4em;
+    border-radius: 0.5em;
+}
+
+h3 {
+    font-size: 1.2em;
+    margin: 0.5em -10px;
+}
+
+.gamewrapper {
+    overflow: auto;
+    margin-bottom: 1.5em;
+    margin-top: -1em;
+}
+
+.scores {
+    background: #FFFFFF;
+    text-align: center;
+    border: 1px solid #C3C3C3;
+    border-collapse: collapse;
+    margin: 1.5em 1.5em 1.5em 0;
+    min-width: 12em;
+}
+
+.scores.summary {
+    margin-bottom: 0;
+    float: left;
+}
+
+.scores .title {
+    color: #F3F3F3;
+    background: #222244;
+}
+
+.scores th, .scores td {
+    min-width: 1em;
+    padding: 0.2em;
+}
+
+.scores .winner {
+    background: #CCEEFF;
+}
+
+.teamsummary {
+    border-collapse: collapse;
+    border: 1px solid #C3C3C3;
+    text-align: center;
+}
+
+.teamsummary th {
+    color: #FFFFFF;
+    background: #222244;
+    border-left: 1px solid #FFFFFF;
+}
+
+.teamsummary th:first-child {
+    border-left: none;
+}
+
+.teamsummary th, .teamsummary td {
+    padding: 0.5em 1em;
+}
+
+.teamsummary td {
+    border-color: #C3C3C3;
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+}
+
+form {
+    margin-bottom: 1.5em;
+}
+
+.plotarea {
+    text-align: center;
+}
+
+.plotContainer {
+    margin-bottom: 1.5em;
+}
+
+abbr {
+    cursor: help;
+}
