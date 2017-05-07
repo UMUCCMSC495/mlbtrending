@@ -5,7 +5,6 @@ Ext.define('MlbApp.view.Plotter', {
 	defaults: {
 		padding: '10 10 10 10'
 	},
-//	autoscroll: true,
 	items: [{
 		html: '<h1 class="x-panel-header">Plotter</h1>',
 		border: false

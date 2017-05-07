@@ -10,7 +10,7 @@ Ext.define('MlbApp.view.TeamChart', {
 
         me.items = [{
             xtype: 'panel',
-            html: '<p>Select a team above.</p>'
+            html: '<p>&nbsp;&nbsp;&nbsp;Select a team above.</p>'
         }];
 
         this.callParent();

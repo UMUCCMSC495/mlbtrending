@@ -5,6 +5,17 @@ Ext.define('MlbApp.view.TeamHistory', {
 	padding: '10 10 10 10',
 	width: '100%',
 	border: 0,
+	
+    initComponent: function() {
+        var me = this;
+
+        me.items = [{
+            xtype: 'panel',
+            html: '<p>&nbsp;&nbsp;&nbsp;Select a team above.</p>'
+        }];
+
+        this.callParent();
+    },
     
     loadGames: function(abbr) {
     	

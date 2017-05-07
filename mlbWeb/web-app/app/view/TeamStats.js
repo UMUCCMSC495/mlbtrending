@@ -6,6 +6,17 @@ Ext.define('MlbApp.view.TeamStats', {
 	width: '100%',
 	border: 0,
     
+    initComponent: function() {
+        var me = this;
+
+        me.items = [{
+            xtype: 'panel',
+            html: '<p>&nbsp;&nbsp;&nbsp;Select a team above.</p>'
+        }];
+
+        this.callParent();
+    },
+
     loadData: function(abbr) {
     	
     	var me = this;
