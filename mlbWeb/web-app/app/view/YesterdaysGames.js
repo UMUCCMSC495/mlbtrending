@@ -37,9 +37,9 @@ Ext.define('MlbApp.view.YesterdaysGames', {
                         });
                     });
                     
-        			var todaysgamespanel = Ext.ComponentQuery.query('#yesterdaysgamespanel')[0];
+        			var yesterdaysgamespanel = Ext.ComponentQuery.query('#yesterdaysgamespanel')[0];
         			
-        			todaysgamespanel.removeAll();
+        			yesterdaysgamespanel.removeAll();
         			
         			for(var i=0; i<games.length; i++)
         			{
