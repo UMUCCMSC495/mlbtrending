@@ -14,18 +14,15 @@ Ext.define('MlbApp.view.Plotter', {
 		listeners: {
 	    	'select':function(combo, records, eOpts)
 	    	{
-//	    		var teamHistoryTitle = Ext.ComponentQuery.query('#teamhistorytitle')[0];
-//	    		var teamhistorypanel = Ext.ComponentQuery.query('#teamhistorypanel')[0];
-//	    		
-//	    		teamHistoryTitle.setTitle(records[0].data.city + ' ' + records[0].data.name + ' - Recent Games');
-//	    		teamhistorypanel.loadGames(records[0].data.abbr);
+                var teamChart = Ext.ComponentQuery.query('#teamchart')[0];
+                teamChart.plot(records[0].data.abbr);
 	    	}
 	    }
 	},{
 		xtype: 'panel',
-		title: 'Team History',
-		alias: 'widget.teamhistorytitle',
-		itemId: 'teamhistorytitle'
+		title: 'Plot',
+		alias: 'widget.teamcharttitle',
+		itemId: 'teamcharttitle'
 	},{
 		xtype: 'teamchart'
 	}]
