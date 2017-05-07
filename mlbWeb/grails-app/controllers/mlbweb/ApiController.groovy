@@ -8,7 +8,7 @@ class ApiController {
     }
     
     def games() {
-        def when = params.arg ?: "today"
+        def when = params.when ?: "today"
         
         switch (when) {
         case "yesterday":

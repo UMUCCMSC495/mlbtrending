@@ -5,7 +5,7 @@ class UrlMappings {
             action = "teams"
         }
         
-        "/api/games/$when" {
+        "/api/games/$when?" {
             controller = "api"
             action = "games"
         }

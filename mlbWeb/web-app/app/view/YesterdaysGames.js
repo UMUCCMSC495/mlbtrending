@@ -29,7 +29,6 @@ Ext.define('MlbApp.view.YesterdaysGames', {
                         }
                         return 0;
                     });
-                    games.reverse();
                     // Sort innings
                     Ext.each(games, function(game) {
                         game.innings.sort(function(i1, i2) {
@@ -115,6 +114,6 @@ Ext.define('MlbApp.view.YesterdaysGames', {
     
     renderTitle: function(game)
     {
-    	return game.away.abbr + ' @ ' + game.home.abbr;
+    	return game.away.abbr + ' @ ' + game.home.abbr + ': ' + game.status;
     }
 });

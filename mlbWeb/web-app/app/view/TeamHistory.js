@@ -115,6 +115,6 @@ Ext.define('MlbApp.view.TeamHistory', {
     
     renderTitle: function(game)
     {
-    	return game.away.abbr + ' @ ' + game.home.abbr;
+    	return game.away.abbr + ' @ ' + game.home.abbr + ': ' + game.status;
     }
 });

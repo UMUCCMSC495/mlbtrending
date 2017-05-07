@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     # 2017 MLB season: 4/2/2017 - 11/1/2017
     #start = datetime.strptime('04/02/2017', '%m/%d/%Y')
-    start = datetime.strptime('04/30/2017', '%m/%d/%Y')
+    start = datetime.strptime('05/05/2017', '%m/%d/%Y')
     end = datetime.strptime('11/01/2017', '%m/%d/%Y')
     today = datetime.today()
 
