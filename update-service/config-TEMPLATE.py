@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 # See: https://devcenter.heroku.com/articles/cleardb#using-cleardb-with-python-django
 def getConfig():
     if 'DATABASE_URL' in os.environ:
-        url = urlparse.urlparse(os.environ['DATABASE_URL'])
+        url = urlparse(os.environ['DATABASE_URL'])
         config = {
             'host': url.hostname,
             'port': url.port,
