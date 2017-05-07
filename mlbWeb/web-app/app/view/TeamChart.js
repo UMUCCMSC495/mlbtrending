@@ -28,15 +28,67 @@ Ext.define('MlbApp.view.TeamChart', {
                 var chartTitle = 'Win Rate';
                 var yAxisRenderer = function(v) { return v + '%'; };
                 
+                var dataFields = ['month'];
+                var axisFields = [];
+                var chartSeries = [];
+                var i = 1;
+                Ext.iterate(stats.data.years, function(year, yearData) {
+                    dataFields.push(year);
+                    axisFields.push(year);
+                    
+                    chartSeries.push({
+                        type: 'line',
+                        axis: 'left',
+                        xField: 'month',
+                        yField: year,
+                        style: {
+                            'stroke-width': 4
+                        },
+                        markerConfig: {
+                            radius: 4
+                        },
+                        highlight: {
+                            fill: '#000',
+                            radius: 5,
+                            'stroke-width': 2,
+                            stroke: '#fff'
+                        },
+                        tips: {
+                            trackMouse: true,
+                            style: 'background: #FFF',
+                            height: 20,
+                            showDelay: 0,
+                            dismissDelay: 0,
+                            hideDelay: 0,
+                            renderer: function(storeItem, item) {
+                                this.setTitle(storeItem.get('month') + ': ' + storeItem.get(year) + '%');
+                            }
+                        }
+                    });
+                    
+                    i++;
+                });
+                
+                var chartDataPoints = [];
+                
+                for (var i = 0; i < stats.data.series.months.length - 2; i++) {
+                    var dataPoint = { month: stats.data.series.months[i] };
+                    
+                    var j = 1;
+                    Ext.iterate(stats.data.series.years, function(year, yearData) {
+                        if (i < yearData.winrates.length) {
+                            var winrate = parseFloat((yearData.winrates[i] * 100).toFixed(0));
+                            dataPoint[year] = winrate;
+                        }
+                        j++;
+                    });
+                    
+                    chartDataPoints.push(dataPoint);
+                }
+                
                 var chartData = Ext.create('Ext.data.JsonStore', {
-                    fields: ['month', 'data1', 'data2'],
-                    data: [
-                        { month: 'Jan', data1: 20, data2: 19 },
-                        { month: 'Feb', data1: 20, data2: 18 },
-                        { month: 'Mar', data1: 19, data2: 16 },
-                        { month: 'Apr', data1: 18, data2: 14 },
-                        { month: 'May', data1: 18, data2: 15 }
-                    ]
+                    fields: dataFields,
+                    data: chartDataPoints
                 });
                 
                 var chart = new Ext.chart.Chart({
@@ -65,7 +117,7 @@ Ext.define('MlbApp.view.TeamChart', {
                     }],
                     axes: [{
                         type: 'numeric',
-                        fields: ['data1','data2'],
+                        fields: axisFields,
                         position: 'left',
                         grid: true,
                         minimum: 0,
@@ -84,64 +136,7 @@ Ext.define('MlbApp.view.TeamChart', {
                             }
                         }
                     }],
-                    series: [{
-                        type: 'line',
-                        axis: 'left',
-                        xField: 'month',
-                        yField: 'data1',
-                        style: {
-                            'stroke-width': 4
-                        },
-                        markerConfig: {
-                            radius: 4
-                        },
-                        highlight: {
-                            fill: '#000',
-                            radius: 5,
-                            'stroke-width': 2,
-                            stroke: '#fff'
-                        },
-                        tips: {
-                            trackMouse: true,
-                            style: 'background: #FFF',
-                            height: 20,
-                            showDelay: 0,
-                            dismissDelay: 0,
-                            hideDelay: 0,
-                            renderer: function(storeItem, item) {
-                                this.setTitle(storeItem.get('month') + ': ' + storeItem.get('data1') + '%');
-                            }
-                        }
-                    },{
-                        type: 'line',
-                        axis: 'left',
-                        xField: 'month',
-                        yField: 'data2',
-                        style: {
-                            'stroke-width': 4
-                        },
-                        markerConfig: {
-                            radius: 4
-                        },
-                        highlight: {
-                            fill: '#000',
-                            radius: 5,
-                            'stroke-width': 2,
-                            stroke: '#fff'
-                        },
-                        tips: {
-                            trackMouse: true,
-                            style: 'background: #FFF',
-                            height: 20,
-                            showDelay: 0,
-                            dismissDelay: 0,
-                            hideDelay: 0,
-                            renderer: function(storeItem, item) {
-                                this.setTitle(storeItem.get('month') + ': ' + storeItem.get('data1') + '%');
-                            }
-                        }
-
-                    }]
+                    series: chartSeries
                 });
 
                 me.removeAll();

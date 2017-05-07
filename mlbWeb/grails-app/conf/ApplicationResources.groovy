@@ -4,15 +4,11 @@ modules = {
     }
 	css {
 		dependsOn 'application'
-//		resource url: 'ext-4.2.1/resources/css/ext-all-neptune.css'
-//		resource url: 'ext-4.2.1/resources/css/ext-theme-neptune/ext-theme-neptune-all.css'
 		resource url: 'ext-4.2.1/resources/ext-theme-neptune/ext-theme-neptune-all.css'
 	}
 	ext_resources {
 		dependsOn 'css'
-		resource url:'ext-4.2.1/ext-all-debug.js'
-//		resource url:'ext-4.2.1/ext-theme-neptune.js'
-//		resource url:'ext-6.2.0/modern/theme-triton/theme-triton.js'
+		resource url:'ext-4.2.1/ext-all.js'
 	}
 	common {
 		dependsOn 'ext_resources'
