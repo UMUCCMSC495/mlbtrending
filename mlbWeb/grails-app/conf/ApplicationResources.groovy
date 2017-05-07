@@ -31,6 +31,7 @@ modules = {
 		resource url:'app/view/Viewport.js'
 		resource url:'app/view/Home.js'
 		resource url:'app/view/Teams.js'
+		resource url:'app/view/TeamStats.js'
 		resource url:'app/view/TeamHistory.js'
 		resource url:'app/view/TodaysGames.js'
 		resource url:'app/view/YesterdaysGames.js'

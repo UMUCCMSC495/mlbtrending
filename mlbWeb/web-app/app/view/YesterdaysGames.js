@@ -18,6 +18,25 @@ Ext.define('MlbApp.view.YesterdaysGames', {
         		success: function(response)
         		{
         			var games = Ext.JSON.decode(response.responseText, true);
+                    
+                    // Sort games
+                    games.sort(function(g1, g2) {
+                        if (g1.gameDate < g2) {
+                            return -1;
+                        }
+                        if (g1.gameDate > g2) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    games.reverse();
+                    // Sort innings
+                    Ext.each(games, function(game) {
+                        game.innings.sort(function(i1, i2) {
+                            return i1.inningNumber - i2.inningNumber;
+                        });
+                    });
+                    
         			var todaysgamespanel = Ext.ComponentQuery.query('#yesterdaysgamespanel')[0];
         			
         			todaysgamespanel.removeAll();
